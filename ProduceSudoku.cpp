@@ -1,3 +1,5 @@
+//最初的代码，后续不使用
+
 void ProduceSudoku(int count)
 {	
 	//int count = 5;
