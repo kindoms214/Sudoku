@@ -1,5 +1,18 @@
+#pragma once
+#ifndef _SOLVESUDOKU_H
+#define _SOLVESUDOKU_H
+
+#include<iostream>
+#include<math.h>
+#include<fstream>
+#include<algorithm>
+using namespace std;
+
+int solve_sudoku[9][9];
+bool sign = false;
+
 void SolveSudoku()
-{	
+{
 	char single_character;
 	int s_count = 0, row = 0, col = 0;
 	ifstream ProblemOfSudoku("D:\\A\\软件工程\\Sudoku\\sudoku.txt");
@@ -13,7 +26,7 @@ void SolveSudoku()
 				s_count++;
 				solve_sudoku[row][col] = single_character - '0';
 				col++;
-				if (s_count % 9 == 0) 
+				if (s_count % 9 == 0)
 				{
 					row++;
 					col = 0;
@@ -22,7 +35,7 @@ void SolveSudoku()
 
 			//读出一整个，进行数独的求解
 			if (s_count % 81 == 0)
-			{	
+			{
 				row = 0, col = 0;
 
 				//调用一次DFS()求解数独函数
@@ -34,6 +47,7 @@ void SolveSudoku()
 	}
 	cout << s_count << endl;
 }
+
 
 /* 判断key填入n时是否满足条件 */
 bool Check(int n, int key)
@@ -120,3 +134,6 @@ void OutputSudoku()
 	}
 	cout << endl;
 }
+
+
+#endif // !SOLVESUDOKU
