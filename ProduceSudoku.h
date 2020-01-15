@@ -106,7 +106,7 @@ void produce::ProduceSudoku(int count)
 					}
 					else
 					{
-					`	ostrfile[161] = '\0';
+						ostrfile[161] = '\0';
 					}
 					ostrfile[162] = '\0';	//每个数独添加一个结尾
 					out << ostrfile;
