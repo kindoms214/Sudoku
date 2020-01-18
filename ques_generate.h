@@ -1,83 +1,73 @@
 #pragma once
 
-#ifndef _QUESFENERATE_H
-#define _QUESFENERATE_H
+#ifndef _QUESGENERATE_H
+#define _QUESGENERATE_H
 
 #include<iostream>
 #include<math.h>
+#include<vector>
 #include<string.h>
+#include<stdlib.h>
 #include<fstream>
 #include<algorithm>
 using namespace std;
 
-int delete_sudoku[9][9];
-
-void QuesGenerate(int cont);
-void DeleteNumber();
-void OutputQues();
-
-void QuesGenerate(int cont)
+class generate_ques
 {
-	char single_character;
-	int s_count = 0, row = 0, col = 0;
-	int localnum = 0;
-	ifstream ProblemOfSudoku("D:\\A\\软件工程\\sudoku.txt");
+private:
+	char delete_sudoku[163];
+public:
+	void QuesGenerate(int cont);
+	void DeleteNumber();
+};
 
-	//读数独题目
-	ProblemOfSudoku >> single_character;
-	while (!ProblemOfSudoku.eof() && localnum != cont)
+void generate_ques::QuesGenerate(int cont)
+{
+	ifstream fin("D:\\A\\软件工程\\sudoku.txt");
+	const int LINE_LENGTH = 100;
+	char str[LINE_LENGTH];
+	int linecount = 0;
+
+	ofstream out("D:\\A\\软件工程\\pro.txt");			//创建流类对象并打开文件
+	while (fin.getline(str, LINE_LENGTH))				//读数独终局
 	{	
-		//cout << s_count << endl;
-		if (ProblemOfSudoku.good()) 
+		int ll = strlen(str);
+		for (int i = 0; i < ll; i++)
 		{
-			if (single_character <= '9'&& single_character >= '0')	//判断是否是有效数独数字（0表示该位为空）
+			delete_sudoku[linecount * 18 + i] = str[i];
+		}
+		linecount++;
+		delete_sudoku[linecount * 17 + linecount - 1] = '\n';
+
+		if (linecount % 9 == 0)
+		{	
+			cont--;
+			linecount = 0;
+			if (cont)
 			{
-				s_count++;
-				delete_sudoku[row][col] = single_character - '0';
-				col++;
-				if (s_count % 9 == 0)
-				{
-					row++;
-					col = 0;
-				}
+				delete_sudoku[161] = '\n';
 			}
-
-			//读出一整个，进行数独的求解
-			if (s_count % 81 == 0)
-			{	
-				ProblemOfSudoku >> single_character;
-				s_count = 0;
-				//cout << s_count << endl;
-				row = 0, col = 0;
-				//OutputQues();
-
-				//生成题目
-				if (localnum != cont )
-				{
-					DeleteNumber();
-					localnum++;
-					//memset(delete_sudoku, 0, sizeof(delete_sudoku));
-					continue;
-				}
-				else
-				{
-					return;
-				}
-				//cout << "shu: " << localnum << "  " << cont << endl;
+			else
+			{
+				delete_sudoku[161] = '\0';
 			}
-			
-		}ProblemOfSudoku >> single_character;
+			delete_sudoku[162] = '\0';
+
+			//读完一整个数独，开始挖空
+			DeleteNumber();
+			out << delete_sudoku;
+			memset(delete_sudoku, '0', sizeof(delete_sudoku));
+		}
 	}
-	//cout << s_count << endl;
+	out.close();
 }
 
-//delete_sudoku[9][9];
-void DeleteNumber()
-{	
+void generate_ques::DeleteNumber()
+{
 	//先在每个宫取出两个
 	for (int k = 0; k < 9; k++)
 	{
-		int i, j, hole[2];//3*3里面掏的位置
+		int hole[2];//3*3里面掏的位置
 		hole[0] = rand() % 9;
 		hole[1] = rand() % 9;
 
@@ -94,12 +84,8 @@ void DeleteNumber()
 		{
 			hole[1] = rand() % 9;
 		}
-		//cout << k << "  " << hole[0] << "   " << hole[1] << endl;
-
-		delete_sudoku[3 * (k / 3) + hole[0] / 3][3 * (k % 3) + hole[0] % 3] = 0;
-		delete_sudoku[3 * (k / 3) + hole[1] / 3][3 * (k % 3) + hole[1] % 3] = 0;
-
-		//cout << "re:" << 3 * (k / 3) + hole[0] / 3 << "  " << 3 * (k % 3) + hole[0] % 3 << endl;
+		delete_sudoku[(3 * (k / 3) + hole[0] / 3) * 18 + (3 * (k % 3) + hole[0] % 3) * 2] = '0';
+		delete_sudoku[(3 * (k / 3) + hole[1] / 3) * 18 + (3 * (k % 3) + hole[1] % 3) * 2] = '0';
 	}
 
 	//还需要取出12-42个
@@ -112,25 +98,16 @@ void DeleteNumber()
 		int i = k / 9;
 		int j = k % 9;
 
-		j *= 2;
-		if (delete_sudoku[i][j] != 0 && i != 0 && j != 0)
-			delete_sudoku[i][j] = 0;
-		else additional++;
-	}
-	OutputQues();
-}
-
-void OutputQues()
-{
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
+		//j *= 2;
+		if (delete_sudoku[i * 18 + j] != '0' && (i + j) != 0)
 		{
-			cout << delete_sudoku[i][j] << " ";
+			delete_sudoku[i * 18 + j * 2] = '0';
 		}
-		cout << endl;
+		else
+		{
+			additional++;
+		}
 	}
-	cout << endl;
 }
 
 #endif
