@@ -23,12 +23,12 @@ public:
 
 void generate_ques::QuesGenerate(int cont)
 {
-	ifstream fin("D:\\A\\软件工程\\sudoku.txt");
+	ifstream fin("../sudoku.txt");
 	const int LINE_LENGTH = 100;
 	char str[LINE_LENGTH];
 	int linecount = 0;
 
-	ofstream out("D:\\A\\软件工程\\pro.txt");			//创建流类对象并打开文件
+	ofstream out("../pro_sudoku.txt");			//创建流类对象并打开文件
 	while (fin.getline(str, LINE_LENGTH))				//读数独终局
 	{	
 		int ll = strlen(str);
