@@ -23,7 +23,7 @@ public:
 
 void generate_ques::QuesGenerate(int cont)
 {
-	ifstream fin("../sudoku.txt");
+	ifstream fin("../final_sudoku.txt");
 	const int LINE_LENGTH = 100;
 	char str[LINE_LENGTH];
 	int linecount = 0;
