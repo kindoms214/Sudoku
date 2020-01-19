@@ -8,49 +8,72 @@
 #include<algorithm>
 using namespace std;
 
-int solve_sudoku[9][9];
-bool sign = false;
-
-void SolveSudoku()
+class Solve
 {
-	char single_character;
+private:
+	int solve_sudoku[9][9];
+	bool sign = false;
+	char re_sudoku[163];	//存输出
+public:
+	void SolveSudoku(char * argv);
+	bool Check(int n, int key);
+	int DFS(int n);
+	void OutputSudoku();
+};
+
+void Solve::SolveSudoku(char * argv)
+{	
+	//cout << argv << endl;
 	int s_count = 0, row = 0, col = 0;
-	ifstream ProblemOfSudoku("D:\\A\\软件工程\\Sudoku\\sudoku.txt");
+	//ifstream ProblemOfSudoku("D:\\A\\软件工程\\pro.txt");
+	ifstream ProblemOfSudoku(argv);		//打开文件
+	ofstream out("D:\\A\\软件工程\\sol.txt");			//创建流类对象并打开文件
+
+	const int LINE_LENGTH = 100;
+	char str[LINE_LENGTH];
+	int linecount = 0;
 
 	//读数独题目
-	ProblemOfSudoku >> single_character;
-	while (!ProblemOfSudoku.eof()) {
-		if (ProblemOfSudoku.good()) {
-			if (single_character <= '9'&& single_character >= '0')	//判断是否是有效数独数字（0表示该位为空）
+	while (ProblemOfSudoku.getline(str, LINE_LENGTH))				//读数独终局
+	{
+		int ll = strlen(str);
+		for (int i = 0; i < ll; i++)
+		{
+			if (i % 2 == 0)
 			{
-				s_count++;
-				solve_sudoku[row][col] = single_character - '0';
-				col++;
-				if (s_count % 9 == 0)
+				solve_sudoku[linecount][i / 2] = str[i] - '0';
+			}
+		}
+		linecount++;
+
+		if (linecount % 9 == 0)
+		{	
+			linecount = 0;
+			DFS(0);
+			//OutputSudoku();
+			for (int i = 0; i < 9; i++)
+			{
+				for (int j = 0; j < 9; j++)
 				{
-					row++;
-					col = 0;
+					re_sudoku[i * 18 + j * 2] = solve_sudoku[i][j]+'0';
+					if (j != 8)
+					{
+						re_sudoku[i * 18 + j * 2 + 1] = ' ';
+					}
+					else
+						re_sudoku[i * 18 + j * 2 + 1] = '\n';
 				}
 			}
-
-			//读出一整个，进行数独的求解
-			if (s_count % 81 == 0)
-			{
-				row = 0, col = 0;
-
-				//调用一次DFS()求解数独函数
-				DFS(0);
-				OutputSudoku();
-			}
-			ProblemOfSudoku >> single_character;
+			re_sudoku[162] = '\0';
+			out << re_sudoku;
+			sign = false;
+			memset(solve_sudoku, 0, sizeof(solve_sudoku));
 		}
 	}
-	cout << s_count << endl;
 }
 
-
 /* 判断key填入n时是否满足条件 */
-bool Check(int n, int key)
+bool Solve::Check(int n, int key)
 {
 	/* 判断n所在横列是否合法 */
 	for (int i = 0; i < 9; i++)
@@ -88,7 +111,7 @@ bool Check(int n, int key)
 }
 
 /* 深搜构造数独 */
-int DFS(int n)
+int Solve::DFS(int n)
 {
 	/* 所有的都符合，退出递归 */
 	if (n > 80)
@@ -122,7 +145,7 @@ int DFS(int n)
 }
 
 /*输出求解完的数独*/
-void OutputSudoku()
+void Solve::OutputSudoku()
 {
 	for (int i = 0; i < 9; i++)
 	{
@@ -134,6 +157,5 @@ void OutputSudoku()
 	}
 	cout << endl;
 }
-
 
 #endif // !SOLVESUDOKU
