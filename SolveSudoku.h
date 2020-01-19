@@ -13,21 +13,35 @@ class Solve
 private:
 	int solve_sudoku[9][9];
 	bool sign = false;
-	char re_sudoku[163];	//存输出
+	char re_sudoku[163] = {'0'};	//存输出
 public:
-	void SolveSudoku(char * argv);
+	int SolveSudoku(const char * argv);
 	bool Check(int n, int key);
 	int DFS(int n);
 	void OutputSudoku();
+	int pcheck(const char * argv);
 };
 
-void Solve::SolveSudoku(char * argv)
+int Solve::pcheck(const char * argv)
+{
+	fstream f;
+	f.open(argv, ios::in);
+	if (!f)
+	{
+		cout << "文件不存在" << endl;
+		return 0;
+	}
+	else
+	{
+		cout << "文件已经存在" << endl;
+		return 1;
+	}
+}
+
+int Solve::SolveSudoku(const char * argv)
 {	
-	//cout << argv << endl;
-	int s_count = 0, row = 0, col = 0;
-	//ifstream ProblemOfSudoku("D:\\A\\软件工程\\pro.txt");
 	ifstream ProblemOfSudoku(argv);		//打开文件
-	ofstream out("D:\\A\\软件工程\\sol.txt");			//创建流类对象并打开文件
+	ofstream out("../sudoku.txt");			//创建流类对象并打开文件
 
 	const int LINE_LENGTH = 100;
 	char str[LINE_LENGTH];
@@ -70,6 +84,7 @@ void Solve::SolveSudoku(char * argv)
 			memset(solve_sudoku, 0, sizeof(solve_sudoku));
 		}
 	}
+	return 0;
 }
 
 /* 判断key填入n时是否满足条件 */
@@ -105,7 +120,6 @@ bool Solve::Check(int n, int key)
 			if (solve_sudoku[i][j] == key) return false;
 		}
 	}
-
 	/* 全部合法，返回正确 */
 	return true;
 }
@@ -142,6 +156,7 @@ int Solve::DFS(int n)
 			}
 		}
 	}
+	return 0;
 }
 
 /*输出求解完的数独*/
