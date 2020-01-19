@@ -13,16 +13,16 @@ using namespace std;
 class produce
 {
 private:
-	char num[9] = { '4','1','2','3','5','6','7','8','9' };	
+	char num[9] = { '4','1','2','3','5','6','7','8','9' };
 	int rule_1[2] = { 36,63 };
 	int rule_2[6] = { 147,174,417,471,714,741 };
 	int rule_3[6] = { 258,285,528,582,825,852 };
-	int map[9];			//数独的各行的位移量（相对第一行）
+	int map[9] = { 0 };			//数独的各行的位移量（相对第一行）
 	char ostrfile[163];		//18*9=162，存放生成的数独（单个），每次使用初始化
 public:
 	void ChangeMap(int num_1, int num_2, int num_3);
 	bool AllisNum(string str);
-	void ProduceSudoku(int count);
+	int ProduceSudoku(int count);
 };
 
 //生成转换的数组map，通过rule_1,rule_2,rule_3合并形成
@@ -31,19 +31,19 @@ void produce::ChangeMap(int num_1, int num_2, int num_3)
 	memset(map, 0, sizeof(map));
 	for (int i = 0; i < 3; i++)
 	{
-		int a = pow(10, (2 - i));
+		int a = (int)pow(10, (2 - i));
 		map[i] = num_1 / a;
 		num_1 = num_1 % a;
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		int a = pow(10, (2 - i));
+		int a = (int)pow(10, (2 - i));
 		map[i + 3] = num_2 / a;
 		num_2 = num_2 % a;
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		int a = pow(10, (2 - i));
+		int a = (int)pow(10, (2 - i));
 		map[i + 6] = num_3 / a;
 		num_3 = num_3 % a;
 	}
@@ -69,12 +69,23 @@ bool produce::AllisNum(string str)
 }
 
 //生成数独部分，包括输出到文件（主要是）
-void produce::ProduceSudoku(int count)
-{
-	ofstream out("D:\\A\\软件工程\\sudoku.txt");			//创建流类对象并打开文件
+int produce::ProduceSudoku(int count)
+{	
+	if (count > 1000000)
+	{
+		cout << "输入的数字范围有误" << endl;
+		return 1;
+	}
+	if (count < 1)
+	{
+		cout << "输入的数字范围有误" << endl;
+		return 1;
+	}
+		
+	ofstream out("../final_sudoku.txt");			//创建流类对象并打开文件
 
 	while (next_permutation(num + 1, num + 9) && count)
-	{	
+	{
 		for (int i = 0; i < 2; i++)
 		{
 			for (int j = 0; j < 6; j++)
@@ -110,16 +121,17 @@ void produce::ProduceSudoku(int count)
 					}
 					ostrfile[162] = '\0';	//每个数独添加一个结尾
 					out << ostrfile;
-					
+
 					if (!count)
 					{
-						return;
+						return 0;
 					}
 				}
 			}
 		}
 	}
 	out.close();
+	return 0;
 }
 
 #endif // !1
